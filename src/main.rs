@@ -33,11 +33,14 @@ mod report;
 use std::thread;
 
 use anyhow::Result;
-use clap::{Parser, Subcommand};
+use clap::{CommandFactory, Parser, Subcommand};
 #[cfg(any(feature = "maildir", feature = "m2dir"))]
 use io_email::client::EmailClientStd;
 use pimalaya_cli::{
-    clap::args::{JsonFlag, LogFlags},
+    clap::{
+        args::{JsonFlag, LogFlags},
+        commands::{CompletionCommand, ManualCommand},
+    },
     error::ErrorReport,
     log::Logger,
     long_version,
@@ -77,8 +80,7 @@ fn execute(cli: Cli, printer: &mut impl Printer) -> Result<()> {
         dry_run: cli.dry_run,
     };
 
-    let report = cli.source.execute(context)?;
-    printer.out(report)
+    cli.cmd.execute(context, printer)
 }
 
 #[derive(Parser, Debug)]
@@ -123,12 +125,12 @@ pub struct Cli {
     pub log: LogFlags,
 
     #[command(subcommand)]
-    pub source: Source,
+    pub cmd: Command,
 }
 
 #[derive(Subcommand, Debug)]
 #[command(rename_all = "lower")]
-pub enum Source {
+pub enum Command {
     /// Read from a standard Maildir tree.
     #[cfg(feature = "maildir")]
     Maildir(MaildirSourceCommand),
@@ -139,17 +141,27 @@ pub enum Source {
     /// Read from an m2dir tree.
     #[cfg(feature = "m2dir")]
     M2dir(M2dirSourceCommand),
+    /// Generate shell completion scripts.
+    Completions(CompletionCommand),
+    /// Generate man pages.
+    Manuals(ManualCommand),
 }
 
-impl Source {
-    pub fn execute(self, ctx: Context) -> Result<Report> {
+impl Command {
+    #[cfg_attr(
+        not(any(feature = "maildir", feature = "m2dir")),
+        allow(unused_variables)
+    )]
+    pub fn execute(self, ctx: Context, printer: &mut impl Printer) -> Result<()> {
         match self {
             #[cfg(feature = "maildir")]
-            Self::Maildir(cmd) => cmd.execute(ctx),
+            Self::Maildir(cmd) => printer.out(cmd.execute(ctx)?),
             #[cfg(feature = "maildir")]
-            Self::MaildirPlus(cmd) => cmd.execute(ctx),
+            Self::MaildirPlus(cmd) => printer.out(cmd.execute(ctx)?),
             #[cfg(feature = "m2dir")]
-            Self::M2dir(cmd) => cmd.execute(ctx),
+            Self::M2dir(cmd) => printer.out(cmd.execute(ctx)?),
+            Self::Completions(cmd) => cmd.execute(printer, Cli::command()),
+            Self::Manuals(cmd) => cmd.execute(printer, Cli::command()),
         }
     }
 }

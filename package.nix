@@ -57,7 +57,7 @@ rustPlatform.buildRustPackage {
     '';
 
   meta = {
-    description = "CLI to convert filesystem-based mailboxes between each other";
+    description = "CLI to convert from/to filesystem-based mailboxes, written in Rust";
     mainProgram = "m2m";
     homepage = "https://github.com/pimalaya/m2m";
     changelog = "https://github.com/pimalaya/m2m/blob/v${version}/CHANGELOG.md";
