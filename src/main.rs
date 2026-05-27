@@ -87,25 +87,24 @@ fn execute(cli: Cli, printer: &mut impl Printer) -> Result<()> {
 #[command(name = env!("CARGO_PKG_NAME"))]
 #[command(author, version, about)]
 #[command(long_version = long_version!())]
-#[command(propagate_version = true)]
+#[command(propagate_version = true, arg_required_else_help = true)]
 #[command(subcommand_required = true, infer_subcommands = true)]
-#[command(arg_required_else_help = true)]
 pub struct Cli {
-    /// Worker thread count. Defaults to the available parallelism,
-    /// capped at 16.
-    #[arg(long, short = 'w', value_name = "N", global = true)]
-    pub workers: Option<usize>,
+    #[command(subcommand)]
+    pub cmd: Command,
+
+    /// List the conversion plan without writing anything.
+    #[arg(long, global = true)]
+    pub dry_run: bool,
 
     /// Canonical inbox folder name. Used to detect the inbox on the
     /// source (case-insensitive match) and to name it on the target.
     /// Defaults to `INBOX`.
     #[arg(long, value_name = "NAME", global = true)]
     pub inbox: Option<String>,
-
     /// Mailbox name to include (repeatable, case-insensitive).
     #[arg(long, value_name = "NAME", global = true)]
     pub include_mailbox: Vec<String>,
-
     /// Mailbox name to exclude (repeatable, case-insensitive).
     #[arg(long, value_name = "NAME", global = true)]
     pub exclude_mailbox: Vec<String>,
@@ -114,52 +113,40 @@ pub struct Cli {
     #[arg(long, global = true)]
     pub skip_existing: bool,
 
-    /// List the conversion plan without writing anything.
-    #[arg(long, global = true)]
-    pub dry_run: bool,
-
+    /// Worker thread count. Defaults to the available parallelism,
+    /// capped at 16.
+    #[arg(long, short = 'w', value_name = "N", global = true)]
+    pub workers: Option<usize>,
     #[command(flatten)]
     pub json: JsonFlag,
-
     #[command(flatten)]
     pub log: LogFlags,
-
-    #[command(subcommand)]
-    pub cmd: Command,
 }
 
 #[derive(Subcommand, Debug)]
 #[command(rename_all = "lower")]
 pub enum Command {
-    /// Read from a standard Maildir tree.
     #[cfg(feature = "maildir")]
     Maildir(MaildirSourceCommand),
-    /// Read from a Maildir++ tree (dotted folder siblings).
     #[cfg(feature = "maildir")]
     #[command(name = "maildir++")]
     MaildirPlus(MaildirPlusSourceCommand),
-    /// Read from an m2dir tree.
     #[cfg(feature = "m2dir")]
     M2dir(M2dirSourceCommand),
-    /// Generate shell completion scripts.
+
     Completions(CompletionCommand),
-    /// Generate man pages.
     Manuals(ManualCommand),
 }
 
 impl Command {
-    #[cfg_attr(
-        not(any(feature = "maildir", feature = "m2dir")),
-        allow(unused_variables)
-    )]
-    pub fn execute(self, ctx: Context, printer: &mut impl Printer) -> Result<()> {
+    pub fn execute(self, _ctx: Context, printer: &mut impl Printer) -> Result<()> {
         match self {
             #[cfg(feature = "maildir")]
-            Self::Maildir(cmd) => printer.out(cmd.execute(ctx)?),
+            Self::Maildir(cmd) => printer.out(cmd.execute(_ctx)?),
             #[cfg(feature = "maildir")]
-            Self::MaildirPlus(cmd) => printer.out(cmd.execute(ctx)?),
+            Self::MaildirPlus(cmd) => printer.out(cmd.execute(_ctx)?),
             #[cfg(feature = "m2dir")]
-            Self::M2dir(cmd) => printer.out(cmd.execute(ctx)?),
+            Self::M2dir(cmd) => printer.out(cmd.execute(_ctx)?),
             Self::Completions(cmd) => cmd.execute(printer, Cli::command()),
             Self::Manuals(cmd) => cmd.execute(printer, Cli::command()),
         }
@@ -169,14 +156,11 @@ impl Command {
 #[derive(Subcommand, Debug)]
 #[command(rename_all = "lower")]
 pub enum Target {
-    /// Write to a standard Maildir tree.
     #[cfg(feature = "maildir")]
     Maildir(MaildirTargetCommand),
-    /// Write to a Maildir++ tree (dotted folder siblings).
     #[cfg(feature = "maildir")]
     #[command(name = "maildir++")]
     MaildirPlus(MaildirPlusTargetCommand),
-    /// Write to an m2dir tree.
     #[cfg(feature = "m2dir")]
     M2dir(M2dirTargetCommand),
 }
@@ -226,17 +210,14 @@ impl BackendSpec {
     /// `maildirpp_inbox` alias used by both Maildir-family backends to
     /// name the root mailbox; m2dir ignores it. `init = true` creates
     /// the on-disk store if missing (target side).
-    pub fn build(&self, inbox: &str, init: bool) -> Result<EmailClientStd> {
+    pub fn build(&self, _inbox: &str, init: bool) -> Result<EmailClientStd> {
         match self {
             #[cfg(feature = "maildir")]
-            Self::Maildir(s) => s.build(inbox, init),
+            Self::Maildir(s) => s.build(_inbox, init),
             #[cfg(feature = "maildir")]
-            Self::MaildirPlus(s) => s.build(inbox, init),
+            Self::MaildirPlus(s) => s.build(_inbox, init),
             #[cfg(feature = "m2dir")]
-            Self::M2dir(s) => {
-                let _ = inbox;
-                s.build(init)
-            }
+            Self::M2dir(s) => s.build(init),
         }
     }
 }

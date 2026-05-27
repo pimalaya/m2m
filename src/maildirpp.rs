@@ -30,6 +30,7 @@ use crate::{
     BackendSpec, Context, Target, convert::Conversion, maildir::KeywordHeaderArg, report::Report,
 };
 
+/// Convert from a Maildir++ source tree (dotted folder siblings).
 #[derive(Args, Debug)]
 pub struct MaildirPlusSourceCommand {
     /// Filesystem root of the source Maildir++ store. Subfolders are
@@ -68,6 +69,7 @@ impl MaildirPlusSourceCommand {
     }
 }
 
+/// Convert to a Maildir++ target tree (dotted folder siblings).
 #[derive(Args, Debug)]
 pub struct MaildirPlusTargetCommand {
     /// Filesystem root of the target Maildir++ store; created if

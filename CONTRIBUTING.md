@@ -34,7 +34,7 @@ cargo build --no-default-features --features maildir --release
 m2m is a thin CLI on top of the [Pimalaya](https://github.com/pimalaya) libraries. Most of the work happens in companion crates rather than in this repository:
 
 - [io-email](https://github.com/pimalaya/io-email): cross-protocol email client (`EmailClientStd`, shared `Envelope` / `Mailbox` / `Flag` types).
-- [io-maildir](https://github.com/pimalaya/io-maildir): Maildir / Maildir++ I/O-free coroutines and the std-blocking `MaildirClient`. Hosts the `pub` behaviour knobs (`dovecot_keywords`, `keywords_header`, `strip_headers`, `maildir_plus`, `maildirpp_inbox`, `fs_layout`) consumed by m2m.
+- [io-maildir](https://github.com/pimalaya/io-maildir): Maildir / Maildir++ I/O-free coroutines and the std-blocking `MaildirClient`. Hosts the `pub` behaviour quirks (`dovecot_keywords`, `keywords_header`, `strip_headers`, `maildir_plus`, `maildirpp_inbox`, `fs_layout`) consumed by m2m.
 - [io-m2dir](https://github.com/pimalaya/io-m2dir): m2dir I/O-free coroutines and the std-blocking `M2dirClient`.
 - [pimalaya/cli](https://github.com/pimalaya/cli): cross-binary CLI helpers (clap args, build-time env, spinner, structured logger).
 

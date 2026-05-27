@@ -28,6 +28,7 @@ use io_m2dir::client::M2dirClient;
 
 use crate::{BackendSpec, Context, Target, convert::Conversion, report::Report};
 
+/// Convert from an m2dir source tree.
 #[derive(Args, Debug)]
 pub struct M2dirSourceCommand {
     /// Filesystem root of the source m2dir store (the directory
@@ -46,6 +47,7 @@ impl M2dirSourceCommand {
     }
 }
 
+/// Convert to an m2dir target tree.
 #[derive(Args, Debug)]
 pub struct M2dirTargetCommand {
     /// Filesystem root of the target m2dir store; the `.m2store`

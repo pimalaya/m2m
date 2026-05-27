@@ -128,6 +128,11 @@ impl Conversion {
 
         let workers = self.context.workers.max(1);
 
+        let spinner = Spinner::start("Copying messages");
+        let total_copied = Arc::new(AtomicUsize::new(0));
+        let total_skipped = Arc::new(AtomicUsize::new(0));
+        let total_failed = Arc::new(AtomicUsize::new(0));
+
         for (idx, mapping) in mappings.iter().enumerate() {
             let copied = Arc::new(AtomicUsize::new(0));
             let skipped = Arc::new(AtomicUsize::new(0));
@@ -168,6 +173,7 @@ impl Conversion {
                 });
             }
 
+            let spinner_ref = &spinner;
             thread::scope(|scope| -> Result<()> {
                 let mut handles = Vec::with_capacity(workers);
 
@@ -182,6 +188,9 @@ impl Conversion {
                     let inbox = self.context.inbox.clone();
                     let existing = existing_target_ids.clone();
                     let skip_existing = self.context.skip_existing;
+                    let total_copied = total_copied.clone();
+                    let total_skipped = total_skipped.clone();
+                    let total_failed = total_failed.clone();
 
                     handles.push(scope.spawn(move || -> Result<()> {
                         let mut src = source_spec.build(&inbox, false)?;
@@ -190,21 +199,29 @@ impl Conversion {
                         while let Some(task) = queue.pop() {
                             if skip_existing && existing.contains(&task.dedup_key) {
                                 skipped.fetch_add(1, Ordering::Relaxed);
-                                continue;
+                                total_skipped.fetch_add(1, Ordering::Relaxed);
+                            } else {
+                                match copy_one(&mut src, &mut dst, &mapping, &task) {
+                                    Ok(_) => {
+                                        copied.fetch_add(1, Ordering::Relaxed);
+                                        total_copied.fetch_add(1, Ordering::Relaxed);
+                                    }
+                                    Err(err) => {
+                                        total_failed.fetch_add(1, Ordering::Relaxed);
+                                        let mut fails = failures.lock().unwrap();
+                                        fails.push(MessageFailure {
+                                            id: task.id.clone(),
+                                            error: format!("{err:#}"),
+                                        });
+                                    }
+                                }
                             }
 
-                            match copy_one(&mut src, &mut dst, &mapping, &task) {
-                                Ok(_) => {
-                                    copied.fetch_add(1, Ordering::Relaxed);
-                                }
-                                Err(err) => {
-                                    let mut fails = failures.lock().unwrap();
-                                    fails.push(MessageFailure {
-                                        id: task.id.clone(),
-                                        error: format!("{err:#}"),
-                                    });
-                                }
-                            }
+                            spinner_ref.set_message(progress_message(
+                                &total_copied,
+                                &total_skipped,
+                                &total_failed,
+                            ));
                         }
                         Ok(())
                     }));
@@ -235,8 +252,30 @@ impl Conversion {
             });
         }
 
+        spinner.success(progress_message(
+            &total_copied,
+            &total_skipped,
+            &total_failed,
+        ));
+
         Ok(report)
     }
+}
+
+/// Formats the running message counters for the copy spinner.
+fn progress_message(copied: &AtomicUsize, skipped: &AtomicUsize, failed: &AtomicUsize) -> String {
+    let copied = copied.load(Ordering::Relaxed);
+    let skipped = skipped.load(Ordering::Relaxed);
+    let failed = failed.load(Ordering::Relaxed);
+
+    let mut parts = vec![format!("{copied} copied")];
+    if skipped > 0 {
+        parts.push(format!("{skipped} skipped"));
+    }
+    if failed > 0 {
+        parts.push(format!("{failed} failed"));
+    }
+    parts.join(", ")
 }
 
 /// Source ↔ target mailbox name pair. The two are equal for most

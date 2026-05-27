@@ -28,6 +28,7 @@ use io_maildir::{client::MaildirClient, flag::KeywordHeader};
 
 use crate::{BackendSpec, Context, Target, convert::Conversion, report::Report};
 
+/// Convert from a standard Maildir tree source.
 #[derive(Args, Debug)]
 pub struct MaildirSourceCommand {
     /// Filesystem root of the source store.
@@ -72,6 +73,7 @@ impl MaildirSourceCommand {
     }
 }
 
+/// Convert to a standard Maildir target tree.
 #[derive(Args, Debug)]
 pub struct MaildirTargetCommand {
     /// Filesystem root of the target store; created if missing.
