@@ -1,0 +1,67 @@
+[package]
+name = "m2m"
+description = "CLI to convert from/to filesystem-based mailboxes"
+version = "0.0.1"
+authors = ["soywod <pimalaya.org@posteo.net>"]
+rust-version = "1.87"
+edition = "2024"
+license = "AGPL-3.0-only"
+categories = ["command-line-utilities", "email"]
+keywords = ["cli", "email", "maildir", "m2dir", "convert"]
+homepage = "https://pimalaya.org/"
+documentation = "https://pimalaya.org/m2m/cli/latest/"
+repository = "https://github.com/pimalaya/m2m/"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[features]
+default = ["maildir", "m2dir"]
+maildir = ["dep:io-maildir", "io-email/maildir", "io-maildir/client"]
+m2dir = ["dep:io-m2dir", "io-email/m2dir", "io-m2dir/client"]
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = "symbols"
+panic = "abort"
+
+[build-dependencies]
+pimalaya-cli = { version = "0.0.1", default-features = false, features = ["build"] }
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4.4", features = ["derive", "env", "wrap_help"] }
+crossbeam-queue = "0.3"
+io-email = { version = "0.0.1", default-features = false, features = ["client", "search"] }
+io-maildir = { version = "0.0.1", default-features = false, optional = true }
+io-m2dir = { version = "0.0.1", default-features = false, optional = true }
+log = "0.4"
+pimalaya-cli = { version = "0.0.1", default-features = false, features = ["terminal", "spinner"] }
+serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+tempfile = "3"
+
+# [patch.crates-io]
+# io-email.path = "../io-email"
+# io-http.path = "../io-http"
+# io-imap.path = "../io-imap"
+# io-jmap.path = "../io-jmap"
+# io-m2dir.path = "../io-m2dir"
+# io-maildir.path = "../io-maildir"
+# io-smtp.path = "../io-smtp"
+# pimalaya-cli.path = "../cli"
+# pimalaya-stream.path = "../stream"
+
+[patch.crates-io]
+io-email.git = "https://github.com/pimalaya/io-email"
+io-http.git = "https://github.com/pimalaya/io-http"
+io-imap.git = "https://github.com/pimalaya/io-imap"
+io-jmap.git = "https://github.com/pimalaya/io-jmap"
+io-m2dir.git = "https://github.com/pimalaya/io-m2dir"
+io-maildir.git = "https://github.com/pimalaya/io-maildir"
+io-smtp.git = "https://github.com/pimalaya/io-smtp"
+pimalaya-cli.git = "https://github.com/pimalaya/cli"
+pimalaya-stream.git = "https://github.com/pimalaya/stream"
