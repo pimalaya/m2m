@@ -23,8 +23,8 @@ use std::{fs, path::PathBuf};
 
 use anyhow::{Context as _, Result};
 use clap::Args;
-use io_email::client::EmailClientStd;
-use io_maildir::{client::MaildirClient, flag::KeywordHeader};
+use io_email::{client::EmailClientStd, maildir::client::MaildirClient};
+use io_maildir::flag::KeywordHeader;
 
 use crate::{
     BackendSpec, Context, Target, convert::Conversion, maildir::KeywordHeaderArg, report::Report,
@@ -130,13 +130,13 @@ impl MaildirPlusSpec {
         }
 
         let mut client = MaildirClient::new(self.path.to_string_lossy().into_owned());
-        client.maildir_plus = true;
-        client.fs_layout = false;
-        client.maildirpp_inbox = inbox.to_string();
-        client.dovecot_keywords = self.dovecot_keywords;
-        client.keywords_header = self.keywords_header;
-        client.strip_headers = self.strip_headers.clone();
+        client.inner.maildir_plus = true;
+        client.inner.fs_layout = false;
+        client.inner.maildirpp_inbox = inbox.to_string();
+        client.inner.dovecot_keywords = self.dovecot_keywords;
+        client.inner.keywords_header = self.keywords_header;
+        client.inner.strip_headers = self.strip_headers.clone();
 
-        Ok(EmailClientStd::from(client))
+        Ok(EmailClientStd::new().with_maildir(client))
     }
 }

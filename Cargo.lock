@@ -119,9 +119,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.2.62"
+version = "1.2.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1dce859f0832a7d088c4f1119888ab94ef4b5d6795d1ce05afb7fe159d79f98"
+checksum = "556e016178bb5662a08681bbe0f00f8e17631781a4dfc8c45e466e4b185ec27f"
 dependencies = [
  "find-msvc-tools",
  "jobserver",
@@ -679,10 +679,11 @@ dependencies = [
 [[package]]
 name = "io-email"
 version = "0.0.1"
-source = "git+https://github.com/pimalaya/io-email#7eb77588cbf1c3857a73ed2b737100bf0ab41e91"
+source = "git+https://github.com/pimalaya/io-email#d525cdd4f23fdae3a80cd4315f32b00685032732"
 dependencies = [
  "chrono",
  "chumsky",
+ "gethostname",
  "io-imap",
  "io-jmap",
  "io-m2dir",
@@ -697,7 +698,7 @@ dependencies = [
 [[package]]
 name = "io-http"
 version = "0.0.3"
-source = "git+https://github.com/pimalaya/io-http#1e71383b97e823f9440ea2d7c2af378bcd3b5933"
+source = "git+https://github.com/pimalaya/io-http#73b264b85209d86de48afed25957ab582b54c272"
 dependencies = [
  "base64",
  "httparse",
@@ -711,7 +712,7 @@ dependencies = [
 [[package]]
 name = "io-imap"
 version = "0.0.1"
-source = "git+https://github.com/pimalaya/io-imap#b6871a87f5b491003dbcc61bcdde4dd5d0b17828"
+source = "git+https://github.com/pimalaya/io-imap#523ce8fd9e09fba5d91c066805e61cd798fab9e2"
 dependencies = [
  "base64",
  "imap-codec",
@@ -723,7 +724,7 @@ dependencies = [
 [[package]]
 name = "io-jmap"
 version = "0.0.1"
-source = "git+https://github.com/pimalaya/io-jmap#740ac4f314d4de3b4c6b53eba61722787f01f24c"
+source = "git+https://github.com/pimalaya/io-jmap#2463ecb104d0ff24b8c3ba2f4eaa09562ce5a1cd"
 dependencies = [
  "io-http",
  "log",
@@ -737,7 +738,7 @@ dependencies = [
 [[package]]
 name = "io-m2dir"
 version = "0.0.1"
-source = "git+https://github.com/pimalaya/io-m2dir#0f36832cf074eae35d3b9959c7c98076fc0da57b"
+source = "git+https://github.com/pimalaya/io-m2dir#0865b8301c49b2669d66fff93efdc02596cb4e66"
 dependencies = [
  "log",
  "thiserror",
@@ -746,7 +747,7 @@ dependencies = [
 [[package]]
 name = "io-maildir"
 version = "0.0.1"
-source = "git+https://github.com/pimalaya/io-maildir#15b5cd3d309b98fa299b851a6e98715e2450487e"
+source = "git+https://github.com/pimalaya/io-maildir#7cfb98c861a710a272ffdb48c330c6c744e289aa"
 dependencies = [
  "gethostname",
  "log",
@@ -757,7 +758,7 @@ dependencies = [
 [[package]]
 name = "io-smtp"
 version = "0.0.1"
-source = "git+https://github.com/pimalaya/io-smtp#f3687e2b8997463fb247d8df6a685906746eb549"
+source = "git+https://github.com/pimalaya/io-smtp#3b8cf0d806c23339a46a540e159de3d4cd9898f3"
 dependencies = [
  "base64",
  "bounded-static",
@@ -804,9 +805,9 @@ checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
 
 [[package]]
 name = "libgit2-sys"
-version = "0.18.4+1.9.3"
+version = "0.18.5+1.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9b26f66f35e1871b22efcf7191564123d2a446ca0538cde63c23adfefa9b15b7"
+checksum = "005d6ae6eac1912906073e069f7db60b1fa98e052a68227824afe3e3a1c59ca2"
 dependencies = [
  "cc",
  "libc",
@@ -825,9 +826,9 @@ dependencies = [
 
 [[package]]
 name = "libz-sys"
-version = "1.1.28"
+version = "1.1.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc3a226e576f50782b3305c5ccf458698f92798987f551c6a02efe8276721e22"
+checksum = "85bc9657773828b90eeb625adff10eeac83cc21bbfd8e23a03eaa8a33c9e28d9"
 dependencies = [
  "cc",
  "libc",
@@ -916,9 +917,9 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "mio"
-version = "1.2.0"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50b7e5b27aa02a74bac8c3f23f448f8d87ff11f92d3aac1a6ed369ee08cc56c1"
+checksum = "02bd0af71c67b473010cbbc60715ee815645a4dc942899111f494b4b737d6fda"
 dependencies = [
  "libc",
  "log",
@@ -1022,7 +1023,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 [[package]]
 name = "pimalaya-cli"
 version = "0.0.1"
-source = "git+https://github.com/pimalaya/cli#b4078bd986685fdd0193e7fe5a383d02defc2bc5"
+source = "git+https://github.com/pimalaya/cli#8ee488f8701b9e4a5bb29dbcbc051b399b78e5c6"
 dependencies = [
  "anyhow",
  "clap",
@@ -1042,7 +1043,7 @@ dependencies = [
 [[package]]
 name = "pimalaya-stream"
 version = "0.0.1"
-source = "git+https://github.com/pimalaya/stream#55bbb1cbf929effdc131573724017b86450a6ddd"
+source = "git+https://github.com/pimalaya/stream#6449136364c9ef81248e3b4ab6491dd154293481"
 dependencies = [
  "anyhow",
  "log",
@@ -1279,9 +1280,9 @@ dependencies = [
 
 [[package]]
 name = "shlex"
-version = "1.3.0"
+version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
+checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
 
 [[package]]
 name = "signal-hook"
@@ -1737,18 +1738,18 @@ dependencies = [
 
 [[package]]
 name = "zerocopy"
-version = "0.8.49"
+version = "0.8.50"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bce33a6288fa3f072a8c2c7d0f2fdbb90e28298f0135c1f99b96c3db2efcc60b"
+checksum = "3b065d4f0e55f82fae73202e189638116a87c55ab6b8e6c2721e13dd9d854ad1"
 dependencies = [
  "zerocopy-derive",
 ]
 
 [[package]]
 name = "zerocopy-derive"
-version = "0.8.49"
+version = "0.8.50"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8fd425244944f4ab65ccff928e7323354c5a018c75838362fdce749dfad2ee1e"
+checksum = "0b631b19d36a892ab55420c92dbc83ccd79274f25be714855d3074aa71cab639"
 dependencies = [
  "proc-macro2",
  "quote",

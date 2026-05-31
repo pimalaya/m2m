@@ -23,8 +23,7 @@ use std::path::PathBuf;
 
 use anyhow::{Context as _, Result};
 use clap::Args;
-use io_email::client::EmailClientStd;
-use io_m2dir::client::M2dirClient;
+use io_email::{client::EmailClientStd, m2dir::client::M2dirClient};
 
 use crate::{BackendSpec, Context, Target, convert::Conversion, report::Report};
 
@@ -83,10 +82,11 @@ impl M2dirSpec {
 
         if init {
             client
+                .inner
                 .init_store()
                 .with_context(|| format!("Initialise m2store at {}", self.path.display()))?;
         }
 
-        Ok(EmailClientStd::from(client))
+        Ok(EmailClientStd::new().with_m2dir(client))
     }
 }

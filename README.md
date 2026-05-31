@@ -1,9 +1,9 @@
-# m2m [![Matrix](https://img.shields.io/badge/chat-%23pimalaya-blue?style=flat&logo=matrix&logoColor=white)](https://matrix.to/#/#pimalaya:matrix.org) [![Mastodon](https://img.shields.io/badge/news-%40pimalaya-blue?style=flat&logo=mastodon&logoColor=white)](https://fosstodon.org/@pimalaya)
+# 🔄 m2m [![Matrix](https://img.shields.io/badge/chat-%23pimalaya-blue?style=flat&logo=matrix&logoColor=white)](https://matrix.to/#/#pimalaya:matrix.org) [![Mastodon](https://img.shields.io/badge/news-%40pimalaya-blue?style=flat&logo=mastodon&logoColor=white)](https://fosstodon.org/@pimalaya)
 
 CLI to convert filesystem-based mailboxes, written in Rust.
 
 > [!CAUTION]
-> m2m is in active development and shipped as `v0.x.x`. Expect breaking changes between releases until stabilisation.
+> m2m is in active development and currently shipped as `v0.x.x`. Expect breaking changes between releases until stabilization.
 
 ## Table of contents
 
@@ -14,6 +14,7 @@ CLI to convert filesystem-based mailboxes, written in Rust.
   - [Sources](#sources)
 - [Usage](#usage)
 - [Quirks](#quirks)
+- [AI disclosure](#ai-disclosure)
 - [Social](#social)
 - [Sponsoring](#sponsoring)
 
@@ -106,6 +107,22 @@ m2m --dry-run maildir ~/Mail m2dir /mnt/backup
 | `--fs-layout` | Dovecot fs layout: subfolders are nested filesystem directories (`Work/Foo/`) instead of flat dotted siblings. Only on the `maildir` subcommand. |
 
 When both sides set `--dovecot-keywords` and the dovecot slot table grows past 26 entries, the 27th keyword and onwards are dropped with a `warn!` log line per message; the conversion continues.
+
+## AI disclosure
+
+This project is developed with AI assistance. This section documents how, so users and downstream packagers can make informed decisions.
+
+- **Tools**: Claude Code (Anthropic), Opus 4.7, invoked locally with a persistent project-scoped memory and a small set of repo-specific rules.
+
+- **Used for**: Refactors, mechanical multi-file edits, boilerplate (feature gates, error enums, derive macros, trait impls), test scaffolding, doc polish, exploratory design conversations.
+
+- **Not used for**: Engineering, critical code, git manipulation (commit, merge, rebase…), real-world tests.
+
+- **Verification**: Every AI-assisted change is read, compiled, tested, and formatted before commit (`nix develop --command cargo check / cargo test / cargo fmt`). Behavioural correctness is verified against the relevant RFC or upstream spec, not assumed from the model output. Tests are never adjusted to fit AI-generated code; the code is adjusted to fit correct behaviour.
+
+- **Limitations**: AI models occasionally produce code that compiles and passes tests but is subtly wrong: off-by-one errors, missed edge cases, plausible but nonexistent APIs, stale RFC references. The verification workflow catches most of this; it does not catch all of it. Bug reports are welcome and taken seriously.
+
+- **Last reviewed**: 31/05/2026
 
 ## Social
 
